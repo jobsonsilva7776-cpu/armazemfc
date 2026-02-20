@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Interclasse 2026</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#121212;
+    color:white;
+    text-align:center;
+    margin:0;
+}
+
+h1{
+    background:#000;
+    padding:20px;
+}
+
+.section{
+    margin:30px auto;
+    width:90%;
+    background:#1f1f1f;
+    padding:20px;
+    border-radius:10px;
+}
+
+input{
+    padding:8px;
+    margin:5px;
+    border-radius:5px;
+    border:none;
+}
+
+button{
+    padding:8px 12px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.add{
+    background:#00c853;
+    color:white;
+}
+
+.delete{
+    background:red;
+    color:white;
+}
+
+table{
+    width:100%;
+    margin-top:15px;
+    border-collapse:collapse;
+    background:white;
+    color:black;
+}
+
+th, td{
+    border:1px solid #ccc;
+    padding:8px;
+}
+
+th{
+    background:#00c853;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🏆 Interclasse 2026</h1>
+
+<script>
+
+const esportes = ["basquete","volei","xadrez","futsal","handebol","tenis"];
+
+function salvar(esporte, lista){
+    localStorage.setItem(esporte, JSON.stringify(lista));
+}
+
+function carregar(esporte){
+    return JSON.parse(localStorage.getItem(esporte)) || [];
+}
+
+function renderizar(esporte){
+    let tabela = document.getElementById(esporte+"Tabela");
+    tabela.innerHTML = "<tr><th>Nome</th><th>Ação</th></tr>";
+
+    let lista = carregar(esporte);
+
+    lista.forEach((nome, index) => {
+        let linha = tabela.insertRow(-1);
+        linha.insertCell(0).innerHTML = nome;
+        linha.insertCell(1).innerHTML =
+            `<button class='delete' onclick="remover('${esporte}', ${index})">Excluir</button>`;
+    });
+}
+
+function adicionar(esporte){
+    let input = document.getElementById(esporte+"Input");
+    let nome = input.value;
+
+    if(nome === ""){
+        alert("Digite um nome!");
+        return;
+    }
+
+    let lista = carregar(esporte);
+    lista.push(nome);
+    salvar(esporte, lista);
+    input.value = "";
+    renderizar(esporte);
+}
+
+function remover(esporte, index){
+    let lista = carregar(esporte);
+    lista.splice(index,1);
+    salvar(esporte, lista);
+    renderizar(esporte);
+}
+
+window.onload = function(){
+    esportes.forEach(esporte => renderizar(esporte));
+}
+
+</script>
+
+<!-- ESPORTES -->
+
+<div class="section">
+<h2>🏀 Basquete</h2>
+<input type="text" id="basqueteInput" placeholder="Nome do participante">
+<button class="add" onclick="adicionar('basquete')">Adicionar</button>
+<table id="basqueteTabela"></table>
+</div>
+
+<div class="section">
+<h2>🏐 Vôlei</h2>
+<input type="text" id="voleiInput" placeholder="Nome do participante">
+<button class="add" onclick="adicionar('volei')">Adicionar</button>
+<table id="voleiTabela"></table>
+</div>
+
+<div class="section">
+<h2>♟ Xadrez</h2>
+<input type="text" id="xadrezInput" placeholder="Nome do participante">
+<button class="add" onclick="adicionar('xadrez')">Adicionar</button>
+<table id="xadrezTabela"></table>
+</div>
+
+<div class="section">
+<h2>⚽ Futsal</h2>
+<input type="text" id="futsalInput" placeholder="Nome do participante">
+<button class="add" onclick="adicionar('futsal')">Adicionar</button>
+<table id="futsalTabela"></table>
+</div>
+
+<div class="section">
+<h2>🤾 Handebol</h2>
+<input type="text" id="handebolInput" placeholder="Nome do participante">
+<button class="add" onclick="adicionar('handebol')">Adicionar</button>
+<table id="handebolTabela"></table>
+</div>
+
+<div class="section">
+<h2>🏓 Tênis de Mesa</h2>
+<input type="text" id="tenisInput" placeholder="Nome do participante">
+<button class="add" onclick="adicionar('tenis')">Adicionar</button>
+<table id="tenisTabela"></table>
+</div>
+
+</body>
+</html>
