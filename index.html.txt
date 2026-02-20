@@ -1,0 +1,186 @@
+escudo-armazem.png
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Armazém FC - Peneira Oficial</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFD700">
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#4B0082,#5e17eb);
+color:white;
+}
+header{
+background:#FFD700;
+text-align:center;
+padding:30px 15px;
+border-bottom-left-radius:30px;
+border-bottom-right-radius:30px;
+}
+.logo{
+width:120px;
+border-radius:50%;
+border:4px solid #4B0082;
+background:white;
+}
+header h1{color:#4B0082;margin-top:10px;}
+.container{padding:20px;max-width:500px;margin:auto;}
+.form-card{
+background:rgba(255,255,255,0.1);
+padding:20px;
+border-radius:20px;
+}
+label{font-weight:bold;font-size:14px;}
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0 15px 0;
+border-radius:10px;
+border:none;
+}
+button{
+width:100%;
+padding:12px;
+background:#FFD700;
+color:#4B0082;
+font-weight:bold;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin-top:10px;
+}
+button:hover{background:#e6c200;}
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+font-size:12px;
+}
+th,td{
+border:1px solid #FFD700;
+padding:5px;
+text-align:center;
+}
+th{background:#FFD700;color:#4B0082;}
+footer{text-align:center;padding:20px;font-size:12px;}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="escudo-armazem.png" class="logo">
+<h1>Armazém FC</h1>
+<p>Peneira Oficial 2026</p>
+</header>
+
+<div class="container">
+<div class="form-card">
+<h2>Inscrição para Peneira</h2>
+
+<form id="formPeneira">
+<label>Nome Completo</label>
+<input type="text" id="nome" required>
+
+<label>Idade</label>
+<input type="number" id="idade" required>
+
+<label>Data de Nascimento</label>
+<input type="date" id="data" required>
+
+<label>Telefone</label>
+<input type="tel" id="telefone" required>
+
+<label>Categoria</label>
+<select id="categoria" required>
+<option value="">Selecione</option>
+<option>Sub-13</option>
+<option>Sub-15</option>
+<option>Sub-17</option>
+</select>
+
+<button type="submit">Enviar Inscrição ⚽</button>
+</form>
+
+<table id="tabela">
+<thead>
+<tr>
+<th>Nome</th>
+<th>Idade</th>
+<th>Categoria</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<button onclick="exportarExcel()">📊 Exportar para Excel</button>
+
+</div>
+</div>
+
+<footer>
+© 2026 Armazém FC - Bezerros PE
+</footer>
+
+<script>
+const form=document.getElementById("formPeneira");
+const tabela=document.querySelector("#tabela tbody");
+
+function carregar(){
+const inscritos=JSON.parse(localStorage.getItem("inscricoes"))||[];
+tabela.innerHTML="";
+inscritos.forEach(p=>{
+tabela.innerHTML+=`
+<tr>
+<td>${p.nome}</td>
+<td>${p.idade}</td>
+<td>${p.categoria}</td>
+</tr>`;
+});
+}
+
+form.addEventListener("submit",function(e){
+e.preventDefault();
+const inscricao={
+nome:nome.value,
+idade:idade.value,
+data:data.value,
+telefone:telefone.value,
+categoria:categoria.value
+};
+const inscritos=JSON.parse(localStorage.getItem("inscricoes"))||[];
+inscritos.push(inscricao);
+localStorage.setItem("inscricoes",JSON.stringify(inscritos));
+form.reset();
+carregar();
+});
+
+function exportarExcel(){
+const inscritos=JSON.parse(localStorage.getItem("inscricoes"))||[];
+if(inscritos.length===0){alert("Nenhum inscrito!");return;}
+const dados=inscritos.map(p=>({
+Nome:p.nome,
+Idade:p.idade,
+"Data de Nascimento":p.data,
+Telefone:p.telefone,
+Categoria:p.categoria
+}));
+const planilha=XLSX.utils.json_to_sheet(dados);
+const livro=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(livro,planilha,"Inscritos");
+XLSX.writeFile(livro,"Inscricoes_ArmazemFC.xlsx");
+}
+
+carregar();
+</script>
+
+</body>
+</html>
